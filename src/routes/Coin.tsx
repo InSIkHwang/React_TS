@@ -17,7 +17,6 @@ import homeIcon from "../img/home.png";
 const Title = styled.h1`
   font-size: 50px;
   color: ${(props) => props.theme.accentColor};
-  margin-right: 33%;
 `;
 
 const Loader = styled.span`
@@ -34,7 +33,7 @@ const Container = styled.div`
 const Header = styled.header`
   height: 15vh;
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
 `;
 
@@ -84,12 +83,13 @@ const Tab = styled.span<{ isActive: boolean }>`
 `;
 
 const HomeIcon = styled.img`
-  width: 35px;
-  height: 35px;
-  background-color: white;
+  width: 40px;
+  height: 40px;
+  background-color: #ffffff;
   border-radius: 50%;
   align-items: center;
   cursor: pointer;
+  margin-top: 20px;
 `;
 
 interface RouteParams {
@@ -177,10 +177,10 @@ function Coin() {
           {state?.name ? state.name : loading ? "Loading..." : infoData?.name}
         </title>
       </Helmet>
+      <Link to={"/"}>
+        <HomeIcon src={homeIcon} />
+      </Link>
       <Header>
-        <Link to={"/"}>
-          <HomeIcon src={homeIcon} />
-        </Link>
         <Title>
           {state?.name ? state.name : loading ? "Loading..." : infoData?.name}
         </Title>
