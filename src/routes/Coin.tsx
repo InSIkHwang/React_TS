@@ -178,7 +178,7 @@ function Coin() {
         </title>
       </Helmet>
       <Header>
-        <Link to={`${process.env.PUBLIC_URL}/`}>
+        <Link to={"/"}>
           <HomeIcon src={homeIcon} />
         </Link>
         <Title>
