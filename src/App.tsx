@@ -1,6 +1,13 @@
 import { createGlobalStyle } from "styled-components";
 import Router from "./Router";
 import { ReactQueryDevtools } from "react-query/devtools";
+import { lightTheme, darkTheme } from "./theme";
+import { useRecoilValue, useSetRecoilState } from "recoil";
+import { isDarkAtom } from "./atoms";
+import { ThemeProvider } from "styled-components";
+import styled from "styled-components";
+import lightIcon from "./img/light.png";
+import darkIcon from "./img/dark.png";
 
 const GlobalStyle = createGlobalStyle`
 @import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300;400&display=swap');
@@ -67,12 +74,31 @@ a {
 }
 `;
 
+const ToggleIcon = styled.img`
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+  float: right;
+  margin: 20px;
+`;
+
 function App() {
+  const isDark = useRecoilValue(isDarkAtom);
+  const setDarkAtom = useSetRecoilState(isDarkAtom);
+  const toggleDark = () => setDarkAtom((prev) => !prev);
   return (
     <>
-      <GlobalStyle />
-      <Router />
-      <ReactQueryDevtools initialIsOpen={true} />
+      <ThemeProvider theme={isDark ? darkTheme : lightTheme}>
+        <span onClick={toggleDark}>
+          <ToggleIcon
+            src={isDark ? lightIcon : darkIcon}
+            alt="Toggle darkmode"
+          />
+        </span>
+        <GlobalStyle />
+        <Router />
+        <ReactQueryDevtools initialIsOpen={true} />
+      </ThemeProvider>
     </>
   );
 }

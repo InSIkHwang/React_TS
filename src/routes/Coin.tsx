@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
 import { useQuery } from "react-query";
+import { Helmet } from "react-helmet";
 import {
   Switch,
   Route,
@@ -12,10 +12,12 @@ import styled from "styled-components";
 import { fetchCoinInfo, fetchCoinTickers } from "../api";
 import Chart from "./Chart";
 import Price from "./Price";
+import homeIcon from "../img/home.png";
 
 const Title = styled.h1`
-  font-size: 48px;
+  font-size: 50px;
   color: ${(props) => props.theme.accentColor};
+  margin-right: 33%;
 `;
 
 const Loader = styled.span`
@@ -32,14 +34,14 @@ const Container = styled.div`
 const Header = styled.header`
   height: 15vh;
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
 `;
 
 const Overview = styled.div`
   display: flex;
   justify-content: space-between;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: ${(props) => props.theme.boxcolor};
   padding: 10px 20px;
   border-radius: 10px;
 `;
@@ -71,7 +73,7 @@ const Tab = styled.span<{ isActive: boolean }>`
   text-transform: uppercase;
   font-size: 12px;
   font-weight: 400;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: ${(props) => props.theme.boxcolor};
   border-radius: 10px;
   color: ${(props) =>
     props.isActive ? props.theme.accentColor : props.theme.textColor};
@@ -79,6 +81,15 @@ const Tab = styled.span<{ isActive: boolean }>`
     padding: 7px 0px;
     display: block;
   }
+`;
+
+const HomeIcon = styled.img`
+  width: 35px;
+  height: 35px;
+  background-color: white;
+  border-radius: 50%;
+  align-items: center;
+  cursor: pointer;
 `;
 
 interface RouteParams {
@@ -152,12 +163,24 @@ function Coin() {
   );
   const { isLoading: tickersLoading, data: tickersData } = useQuery<PriceData>(
     ["tickers", coinId],
-    () => fetchCoinTickers(coinId)
+    () => fetchCoinTickers(coinId),
+    {
+      /*       refetchInterval: 5000,
+       */
+    }
   );
   const loading = infoLoading || tickersLoading;
   return (
     <Container>
+      <Helmet>
+        <title>
+          {state?.name ? state.name : loading ? "Loading..." : infoData?.name}
+        </title>
+      </Helmet>
       <Header>
+        <Link to={`${process.env.PUBLIC_URL}/`}>
+          <HomeIcon src={homeIcon} />
+        </Link>
         <Title>
           {state?.name ? state.name : loading ? "Loading..." : infoData?.name}
         </Title>
@@ -176,8 +199,8 @@ function Coin() {
               <span>${infoData?.symbol}</span>
             </OverviewItem>
             <OverviewItem>
-              <span>Open Source:</span>
-              <span>{infoData?.open_source ? "Yes" : "No"}</span>
+              <span>Price:</span>
+              <span>{tickersData?.quotes.USD.price.toFixed(2)}</span>
             </OverviewItem>
           </Overview>
           <Description>{infoData?.description}</Description>
@@ -203,10 +226,10 @@ function Coin() {
 
           <Switch>
             <Route path={`/:coinId/price`}>
-              <Price />
+              <Price coinId={coinId} />
             </Route>
             <Route path={`/:coinId/chart`}>
-              <Chart />
+              <Chart coinId={coinId} />
             </Route>
           </Switch>
         </>
